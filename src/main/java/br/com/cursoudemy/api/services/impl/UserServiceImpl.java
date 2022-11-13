@@ -1,6 +1,6 @@
 package br.com.cursoudemy.api.services.impl;
 
-import br.com.cursoudemy.api.domain.User;
+import br.com.cursoudemy.api.domain.Users;
 import br.com.cursoudemy.api.domain.dto.UserDTO;
 import br.com.cursoudemy.api.repositories.UserRepository;
 import br.com.cursoudemy.api.services.UserService;
@@ -22,15 +22,15 @@ public class UserServiceImpl implements UserService {
     private ModelMapper mapper;
 
     @Override
-    public User findById(Integer id) {
-        Optional<User> obj = repository.findById(id);
+    public Users findById(Integer id) {
+        Optional<Users> obj = repository.findById(id);
         return  obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
     }
-    public List<User> findAll(){
+    public List<Users> findAll(){
         return repository.findAll();
     }
     @Override
-    public User create(UserDTO obj) {
-        return repository.save(mapper.map(obj, User.class));
+    public Users create(UserDTO obj) {
+        return repository.save(mapper.map(obj, Users.class));
     }
 }
