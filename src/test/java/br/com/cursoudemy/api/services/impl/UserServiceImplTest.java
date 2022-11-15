@@ -3,6 +3,7 @@ package br.com.cursoudemy.api.services.impl;
 import br.com.cursoudemy.api.domain.Users;
 import br.com.cursoudemy.api.domain.dto.UserDTO;
 import br.com.cursoudemy.api.repositories.UserRepository;
+import br.com.cursoudemy.api.services.exceptions.DataIntegratyViolationException;
 import br.com.cursoudemy.api.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,7 @@ import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -68,6 +68,7 @@ class UserServiceImplTest {
         }catch (Exception e){
             assertEquals(ObjectNotFoundException.class, e.getClass());
             assertEquals(OBJETO_NÃO_ENCONTRADO, e.getMessage());
+            assertEquals("E-mail já cadastrado no sistema", e.getMessage());
         }
     }
 
@@ -95,6 +96,18 @@ class UserServiceImplTest {
         assertEquals(LUANA, response.getName());
         assertEquals(EMAIL, response.getEmail());
         assertEquals(PASSWORD, response.getPassword());
+    }
+
+    @Test
+    void whenCreateUserThenReturnAnDataIntegrityViolationException(){
+        when(repository.findByEmail(anyString())).thenReturn(optionalUsers);
+
+        try {
+            optionalUsers.get().setId(2);
+            service.create(userDTO);
+        }catch(Exception e) {
+            assertEquals(DataIntegratyViolationException.class, e.getClass());
+        }
     }
 
     @Test
