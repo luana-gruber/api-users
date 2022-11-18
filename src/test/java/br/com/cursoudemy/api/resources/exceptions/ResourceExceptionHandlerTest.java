@@ -1,5 +1,6 @@
 package br.com.cursoudemy.api.resources.exceptions;
 
+import br.com.cursoudemy.api.services.exceptions.DataIntegrityViolationException;
 import br.com.cursoudemy.api.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,12 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ResourceExceptionHandlerTest {
-
+    public static final String OBJETO_NÃO_ENCONTRADO = "Objeto não encontrado";
+    public static final String E_MAIL_JA_CADASTRADO = "E-mail ja cadastrado";
     @InjectMocks
     private ResourceExceptionHandler exceptionHandler;
 
@@ -26,7 +29,7 @@ public class ResourceExceptionHandlerTest {
     void whenObjectNotFoundExceptionThenReturnAResponseEntity(){
         ResponseEntity<StandardError> response = exceptionHandler
                 .objectNotFound(
-                        new ObjectNotFoundException("Objeto não encontrado"),
+                        new ObjectNotFoundException(OBJETO_NÃO_ENCONTRADO),
                         new MockHttpServletRequest());
 
         assertNotNull(response.getBody());
@@ -34,13 +37,25 @@ public class ResourceExceptionHandlerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals(ResponseEntity.class, response.getClass());
         assertEquals(StandardError.class, response.getBody().getClass());
-        assertEquals("Objeto não encontrado", response.getBody().getError());
+        assertEquals(OBJETO_NÃO_ENCONTRADO, response.getBody().getError());
         assertEquals(404, response.getBody().getStatus());
-
+        assertNotEquals("/user/2", response.getBody().getPath());
+        assertNotEquals(LocalDateTime.now(), response.getBody().getTimestamp());
     }
 
     @Test
-    void dataIntegratyViolationException(){
+    void dataIntegrityViolationException(){
+        ResponseEntity<StandardError> response = exceptionHandler
+                .dataIntegrityViolationException(
+                        new DataIntegrityViolationException(E_MAIL_JA_CADASTRADO),
+                        new MockHttpServletRequest());
 
+        assertNotNull(response.getBody());
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(StandardError.class, response.getBody().getClass());
+        assertEquals(E_MAIL_JA_CADASTRADO, response.getBody().getError());
+        assertEquals(400, response.getBody().getStatus());
     }
 }
