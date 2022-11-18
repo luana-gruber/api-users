@@ -69,7 +69,6 @@ class UserServiceImplTest {
         }catch (Exception e){
             assertEquals(ObjectNotFoundException.class, e.getClass());
             assertEquals(OBJETO_NÃO_ENCONTRADO, e.getMessage());
-            assertEquals(E_MAIL_JÁ_CADASTRADO_NO_SISTEMA, e.getMessage());
         }
     }
 
