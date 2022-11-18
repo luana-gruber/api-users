@@ -40,9 +40,9 @@ class UserResourceTest {
     @Mock
     private UserServiceImpl service;
 
-    private UserDTO userDTO;
+    private UserDTO userDTO = new UserDTO();
 
-    private Users users;
+    private Users users = new Users();
 
     @BeforeEach
     void setUp() {
